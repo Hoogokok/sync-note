@@ -38,6 +38,30 @@ class PostTest {
         assertThat(post.isDeleted()).isFalse();
     }
 
+    @DisplayName("해시태그는 5개이상 추가할 수 없다.")
+    @Test
+    void createPost_fail_if_hashtag_more_then_five() {
+        // given
+        String title = "나의 이야기";
+        String content = "나의 이야기 본문";
+        String author = "나숙희";
+        HashTag hashTag = new HashTag("에세이");
+        HashTag hashTag2 = new HashTag("산수");
+        HashTag hashTag3 = new HashTag("산문");
+        HashTag hashTag4 = new HashTag("수필");
+        HashTag hashTag5 = new HashTag("소설");
+        HashTag hashTag6 = new HashTag("시");
+        List<HashTag> hashtags = List.of(hashTag, hashTag2, hashTag3, hashTag4, hashTag5, hashTag6);
+
+        // when & then
+        assertThrows(IllegalArgumentException.class, () -> Post.builder()
+            .title(title)
+            .content(content)
+            .author(author)
+            .hashTags(hashtags)
+            .build());
+    }
+
     @DisplayName("회원이 글을 수정한다.")
     @Test
     void edit() {

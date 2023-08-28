@@ -18,9 +18,16 @@ public class Post {
     public Post(String title, String content, List<HashTag> hashTags, String author) {
         this.title = title;
         this.content = content;
+        verifyHashTags(hashTags);
         this.hashTags = hashTags;
         this.author = author;
         this.deleted = false;
+    }
+
+    private void verifyHashTags(List<HashTag> hashTags) {
+        if (hashTags != null && hashTags.size() > 5) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void edit(String title, String content, List<HashTag> hashTags) {
@@ -35,5 +42,4 @@ public class Post {
     public void delete() {
         this.deleted = true;
     }
-
 }
