@@ -14,7 +14,7 @@ class PostTest {
 
     @DisplayName("회원이 제목, 본문, 해시태그로 글을 작성한다.")
     @Test
-    void creatPost() {
+    void creat_post() {
         // given
         String title = "나의 이야기";
         String content = "나의 이야기 본문";

@@ -10,11 +10,14 @@ class HashTagTest {
     @DisplayName("해시태그를 생성할 수 있다.")
     @Test
     void create_hashtag() {
-        // given && when
-        HashTag hashTag = new HashTag("에세이");
+        // given
+        String hashTagName = "에세이";
+
+        // when
+        HashTag hashTag = new HashTag(hashTagName);
 
         // then
-        assertThat(hashTag.getName()).isEqualTo("에세이");
+        assertThat(hashTag.getName()).isEqualTo(hashTagName);
         assertThat(hashTag.isDeleted()).isFalse();
     }
 
