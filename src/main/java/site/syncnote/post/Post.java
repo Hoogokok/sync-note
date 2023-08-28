@@ -23,15 +23,17 @@ public class Post {
         this.deleted = false;
     }
 
-    public void edit(String title, String content) {
+    public void edit(String title, String content, List<HashTag> hashTags) {
         if (deleted) {
             throw new IllegalArgumentException();
         }
         this.title = title;
         this.content = content;
+        this.hashTags = hashTags;
     }
 
     public void delete() {
         this.deleted = true;
     }
+
 }
