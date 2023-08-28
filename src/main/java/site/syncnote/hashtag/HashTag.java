@@ -1,6 +1,9 @@
 package site.syncnote.hashtag;
 
 import lombok.Getter;
+
+import java.util.Objects;
+
 @Getter
 public class HashTag {
     private final String name;
@@ -12,5 +15,18 @@ public class HashTag {
     }
 
     public void delete() {
-        this.deleted = true;    }
+        this.deleted = true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof HashTag hashTag)) return false;
+        return deleted == hashTag.deleted && Objects.equals(name, hashTag.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, deleted);
+    }
 }

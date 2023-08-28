@@ -3,6 +3,7 @@ package site.syncnote.post;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+import site.syncnote.hashtag.HashTag;
 
 import java.util.List;
 
@@ -18,7 +19,8 @@ class PostTest {
         String title = "나의 이야기";
         String content = "나의 이야기 본문";
         String author = "나숙희";
-        List<String> hashtags = List.of("에세이");
+        HashTag hashTag = new HashTag("에세이");
+        List<HashTag> hashtags = List.of(hashTag);
 
         // when
         Post post = Post.builder()
@@ -32,7 +34,7 @@ class PostTest {
         assertThat(post.getTitle()).isEqualTo(title);
         assertThat(post.getAuthor()).isEqualTo(author);
         assertThat(post.getContent()).isEqualTo(content);
-        assertThat(post.getHashTags()).containsExactly("에세이");
+        assertThat(post.getHashTags()).containsExactly(hashTag);
         assertThat(post.isDeleted()).isFalse();
     }
 
