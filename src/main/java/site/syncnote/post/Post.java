@@ -12,7 +12,7 @@ public class Post {
     private String title;
     private String content;
     private List<HashTag> hashTags;
-    private Member author;
+    private final Member author;
     private boolean deleted;
 
     @Builder
