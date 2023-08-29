@@ -3,6 +3,7 @@ package site.syncnote.post;
 import lombok.Builder;
 import lombok.Getter;
 import site.syncnote.hashtag.HashTag;
+import site.syncnote.member.Member;
 
 import java.util.List;
 
@@ -11,11 +12,11 @@ public class Post {
     private String title;
     private String content;
     private List<HashTag> hashTags;
-    private String author;
+    private Member author;
     private boolean deleted;
 
     @Builder
-    public Post(String title, String content, List<HashTag> hashTags, String author) {
+    public Post(String title, String content, List<HashTag> hashTags, Member author) {
         this.title = title;
         this.content = content;
         verifyHashTags(hashTags);

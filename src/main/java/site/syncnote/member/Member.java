@@ -1,5 +1,6 @@
 package site.syncnote.member;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -9,6 +10,7 @@ public class Member {
     private String password;
     private boolean unsubscribed;
 
+    @Builder
     public Member(String email, String name, String password) {
         this.email = email;
         this.name = name;

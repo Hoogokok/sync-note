@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import site.syncnote.hashtag.HashTag;
+import site.syncnote.member.Member;
 
 import java.util.List;
 
@@ -18,7 +19,8 @@ class PostTest {
         // given
         String title = "나의 이야기";
         String content = "나의 이야기 본문";
-        String author = "나숙희";
+        String name = "나숙희";
+        Member member = new Member("test@gmail.com", name, "1234");
         HashTag hashTag = new HashTag("에세이");
         List<HashTag> hashtags = List.of(hashTag);
 
@@ -26,13 +28,13 @@ class PostTest {
         Post post = Post.builder()
             .title(title)
             .content(content)
-            .author(author)
+            .author(member)
             .hashTags(hashtags)
             .build();
 
         // then
         assertThat(post.getTitle()).isEqualTo(title);
-        assertThat(post.getAuthor()).isEqualTo(author);
+        assertThat(post.getAuthor()).isEqualTo(member);
         assertThat(post.getContent()).isEqualTo(content);
         assertThat(post.getHashTags()).containsExactly(hashTag);
         assertThat(post.isDeleted()).isFalse();
@@ -44,7 +46,8 @@ class PostTest {
         // given
         String title = "나의 이야기";
         String content = "나의 이야기 본문";
-        String author = "나숙희";
+        String name = "나숙희";
+        Member member = new Member("test@gmail.com", name, "1234");
         HashTag hashTag = new HashTag("에세이");
         HashTag hashTag2 = new HashTag("산수");
         HashTag hashTag3 = new HashTag("산문");
@@ -57,7 +60,7 @@ class PostTest {
         assertThrows(IllegalArgumentException.class, () -> Post.builder()
             .title(title)
             .content(content)
-            .author(author)
+            .author(member)
             .hashTags(hashtags)
             .build());
     }
@@ -66,11 +69,13 @@ class PostTest {
     @Test
     void edit() {
         // given
+        String name = "나숙희";
+        Member member = new Member("test@gmail.com", name, "1234");
         HashTag hashTag = new HashTag("에세이");
         Post post = Post.builder()
             .title("나의 이야기")
             .content("나의 이야기 본문")
-            .author("나숙희")
+            .author(member)
             .hashTags(List.of(hashTag))
             .build();
 
@@ -88,10 +93,12 @@ class PostTest {
     @Test
     void edit_fail_if_post_deleted() {
         // given
+        String name = "나숙희";
+        Member member = new Member("test@gmail.com", name, "1234");
         Post post = Post.builder()
             .title("나의 이야기")
             .content("나의 이야기 본문")
-            .author("나숙희")
+            .author(member)
             .build();
         ReflectionTestUtils.setField(post, "deleted", true);
 

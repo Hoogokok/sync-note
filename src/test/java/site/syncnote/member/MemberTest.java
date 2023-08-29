@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MemberTest {
 
-    @DisplayName("회원은 이메일과 비밀번호와 이름으로 만든다.")
+    @DisplayName("회원을 생성한다.")
     @Test
     void create_member() {
         // given
@@ -18,7 +18,11 @@ class MemberTest {
         String password = "1234";
 
         // when
-        Member tester = new Member(mail, name, password);
+        Member tester = Member.builder()
+            .email(mail)
+            .name(name)
+            .password(password)
+            .build();
 
         // then
         assertThat(tester.getEmail()).isEqualTo(mail);
@@ -26,14 +30,18 @@ class MemberTest {
         assertThat(tester.getPassword()).isEqualTo(password);
     }
 
-    @DisplayName("회원 정보를 수정할 수 있다.")
+    @DisplayName("회원은 비밀번호를 수정할 수 있다.")
     @Test
     void edit() {
         // given
         String mail = "test@gmail.com";
         String name = "tester";
         String password = "1234";
-        Member tester = new Member(mail, name, password);
+        Member tester = Member.builder()
+            .email(mail)
+            .name(name)
+            .password(password)
+            .build();
 
         // when
         tester.edit("테스터 변경", "12345!");
@@ -50,7 +58,11 @@ class MemberTest {
         String mail = "test@gmail.com";
         String name = "tester";
         String password = "1234";
-        Member tester = new Member(mail, name, password);
+        Member tester = Member.builder()
+            .email(mail)
+            .name(name)
+            .password(password)
+            .build();
 
         // when
         ReflectionTestUtils.setField(tester, "unsubscribed", true);
