@@ -89,6 +89,29 @@ class PostTest {
         assertThat(post.getHashTags()).containsExactly(newHashTag);
     }
 
+    @DisplayName("해시태그가 5개이상인 경우 글을 수정할 수 없다.")
+    @Test
+    void edit_fail_if_hashTag_more_then_five() {
+        // given
+        String name = "나숙희";
+        Member member = new Member("test@gmail.com", name, "1234");
+        Post post = Post.builder()
+            .title("나의 이야기")
+            .content("나의 이야기 본문")
+            .author(member)
+            .build();
+        HashTag newHashTag = new HashTag("산문");
+        HashTag newHashTag2 = new HashTag("에세이");
+        HashTag newHashTag3 = new HashTag("시");
+        HashTag newHashTag4 = new HashTag("소설");
+        HashTag newHashTag5 = new HashTag("수필");
+        HashTag newHashTag6 = new HashTag("산수");
+        List<HashTag> newHashTags = List.of(newHashTag, newHashTag2, newHashTag3, newHashTag4, newHashTag5, newHashTag6);
+
+        // when
+        assertThrows(IllegalArgumentException.class, () -> post.edit("너의 이야기", "너의 이야기 본문", newHashTags));
+    }
+
     @DisplayName("글이 삭제된 경우 수정할 수 없다.")
     @Test
     void edit_fail_if_post_deleted() {

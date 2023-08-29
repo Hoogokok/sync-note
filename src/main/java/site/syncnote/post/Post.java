@@ -25,19 +25,20 @@ public class Post {
         this.deleted = false;
     }
 
-    private void verifyHashTags(List<HashTag> hashTags) {
-        if (hashTags != null && hashTags.size() > 5) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public void edit(String title, String content, List<HashTag> hashTags) {
         if (deleted) {
             throw new IllegalArgumentException();
         }
+        verifyHashTags(hashTags);
         this.title = title;
         this.content = content;
         this.hashTags = hashTags;
+    }
+
+    private void verifyHashTags(List<HashTag> hashTags) {
+        if (hashTags != null && hashTags.size() > 5) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void delete() {
