@@ -22,7 +22,7 @@ class HashTagServiceTest {
 
     @DisplayName("기존에 생성한 해시태그는 재사용한다.")
     @Test
-    void 해시태그가_이미_존재하면_재사용한다() {
+    void If_hashTag_already_exists_reuse() {
         // given
         String hashTagName = "에세이";
 

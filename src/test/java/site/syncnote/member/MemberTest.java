@@ -44,7 +44,7 @@ class MemberTest {
             .build();
 
         // when
-        tester.edit("테스터 변경", "12345!");
+        tester.updateMemberInfo("테스터 변경", "12345!");
 
         // then
         assertThat(tester.getName()).isEqualTo("테스터 변경");
@@ -65,10 +65,10 @@ class MemberTest {
             .build();
 
         // when
-        ReflectionTestUtils.setField(tester, "unsubscribed", true);
+        ReflectionTestUtils.setField(tester, "deleted", true);
 
         // then
-        assertThrows(IllegalArgumentException.class, () -> tester.edit("테스터", "12345"));
+        assertThrows(IllegalArgumentException.class, () -> tester.updateMemberInfo("테스터", "12345"));
     }
 
     @DisplayName("회원은 탈퇴할 수 있다.")
@@ -81,9 +81,9 @@ class MemberTest {
         Member tester = new Member(mail, name, password);
 
         // when
-        ReflectionTestUtils.setField(tester, "unsubscribed", true);
+        ReflectionTestUtils.setField(tester, "deleted", true);
 
         // then
-        assertThat(tester.isUnsubscribed()).isTrue();
+        assertThat(tester.isDeleted()).isTrue();
     }
 }
