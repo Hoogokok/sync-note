@@ -1,5 +1,6 @@
 package site.syncnote.post;
 
+import org.aspectj.weaver.ast.Literal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -21,22 +22,18 @@ class PostTest {
         String content = "나의 이야기 본문";
         String name = "나숙희";
         Member member = new Member("test@gmail.com", name, "1234");
-        HashTag hashTag = new HashTag("에세이");
-        List<HashTag> hashtags = List.of(hashTag);
 
         // when
         Post post = Post.builder()
             .title(title)
             .content(content)
             .author(member)
-            .hashTags(hashtags)
             .build();
 
         // then
         assertThat(post.getTitle()).isEqualTo(title);
         assertThat(post.getAuthor()).isEqualTo(member);
         assertThat(post.getContent()).isEqualTo(content);
-        assertThat(post.getHashTags()).containsExactly(hashTag);
         assertThat(post.isDeleted()).isFalse();
     }
 
@@ -54,15 +51,22 @@ class PostTest {
         HashTag hashTag4 = new HashTag("수필");
         HashTag hashTag5 = new HashTag("소설");
         HashTag hashTag6 = new HashTag("시");
-        List<HashTag> hashtags = List.of(hashTag, hashTag2, hashTag3, hashTag4, hashTag5, hashTag6);
-
-        // when & then
-        assertThrows(IllegalArgumentException.class, () -> Post.builder()
+        Post post = Post.builder()
             .title(title)
             .content(content)
             .author(member)
-            .hashTags(hashtags)
-            .build());
+            .build();
+        List<PostHashTag> hashTags = List.of(
+            new PostHashTag(post, hashTag),
+            new PostHashTag(post, hashTag2),
+            new PostHashTag(post, hashTag3),
+            new PostHashTag(post, hashTag4),
+            new PostHashTag(post, hashTag5),
+            new PostHashTag(post, hashTag6)
+        );
+
+        // when & then
+        assertThrows(IllegalArgumentException.class, () -> post.addHashTag(hashTags));
     }
 
     @DisplayName("회원이 글을 수정한다.")
@@ -72,21 +76,22 @@ class PostTest {
         String name = "나숙희";
         Member member = new Member("test@gmail.com", name, "1234");
         HashTag hashTag = new HashTag("에세이");
+        HashTag newHashTag = new HashTag("산문");
         Post post = Post.builder()
             .title("나의 이야기")
             .content("나의 이야기 본문")
             .author(member)
-            .hashTags(List.of(hashTag))
             .build();
+        PostHashTag postHashTag = new PostHashTag(post, hashTag);
+        PostHashTag postHashTag1 = new PostHashTag(post, newHashTag);
 
         // when
-        HashTag newHashTag = new HashTag("산문");
-        post.edit("너의 이야기", "너의 이야기 본문", List.of(newHashTag));
+        post.edit("너의 이야기", "너의 이야기 본문", List.of(postHashTag, postHashTag1));
 
         // then
         assertThat(post.getTitle()).isEqualTo("너의 이야기");
         assertThat(post.getContent()).isEqualTo("너의 이야기 본문");
-        assertThat(post.getHashTags()).containsExactly(newHashTag);
+        assertThat(post.getHashTags()).containsExactly(postHashTag, postHashTag1);
     }
 
     @DisplayName("해시태그가 5개이상인 경우 글을 수정할 수 없다.")
@@ -100,16 +105,23 @@ class PostTest {
             .content("나의 이야기 본문")
             .author(member)
             .build();
-        HashTag newHashTag = new HashTag("산문");
-        HashTag newHashTag2 = new HashTag("에세이");
-        HashTag newHashTag3 = new HashTag("시");
-        HashTag newHashTag4 = new HashTag("소설");
-        HashTag newHashTag5 = new HashTag("수필");
-        HashTag newHashTag6 = new HashTag("산수");
-        List<HashTag> newHashTags = List.of(newHashTag, newHashTag2, newHashTag3, newHashTag4, newHashTag5, newHashTag6);
+        HashTag hashTag = new HashTag("에세이");
+        post.addHashTag(List.of(new PostHashTag(post, hashTag)));
+        HashTag newHashTag1 = new HashTag("에세이");
+        HashTag newHashTag2 = new HashTag("시");
+        HashTag newHashTag3 = new HashTag("소설");
+        HashTag newHashTag4 = new HashTag("수필");
+        HashTag newHashTag5 = new HashTag("산수");
+        List<PostHashTag> hashTags = List.of(
+            new PostHashTag(post, newHashTag1),
+            new PostHashTag(post, newHashTag2),
+            new PostHashTag(post, newHashTag3),
+            new PostHashTag(post, newHashTag4),
+            new PostHashTag(post, newHashTag5)
+        );
 
         // when
-        assertThrows(IllegalArgumentException.class, () -> post.edit("너의 이야기", "너의 이야기 본문", newHashTags));
+        assertThrows(IllegalArgumentException.class, () -> post.edit("너의 이야기", "너의 이야기 본문", hashTags));
     }
 
     @DisplayName("글이 삭제된 경우 수정할 수 없다.")
