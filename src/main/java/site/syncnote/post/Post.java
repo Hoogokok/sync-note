@@ -1,18 +1,27 @@
 package site.syncnote.post;
 
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import site.syncnote.hashtag.HashTag;
 import site.syncnote.member.Member;
-
 import java.util.List;
 
+@NoArgsConstructor
 @Getter
+@Entity
 public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String title;
     private String content;
+    @ManyToMany
     private List<HashTag> hashTags;
-    private final Member author;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member author;
     private boolean deleted;
 
     @Builder
