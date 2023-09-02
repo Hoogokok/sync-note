@@ -1,19 +1,25 @@
 package site.syncnote.hashtag;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 class HashTagServiceTest {
+    @Autowired
+    HashTagService hashTagService;
 
     @DisplayName("해시태그를 찾는다.")
     @Test
     void find() {
         // given
         String hashTagName = "에세이";
+
         // when
-        HashTagService hashTagService = new HashTagService();
         HashTag hashTag = hashTagService.find(hashTagName);
 
         // then
@@ -24,10 +30,9 @@ class HashTagServiceTest {
     @Test
     void If_hashTag_already_exists_reuse() {
         // given
-        String hashTagName = "에세이";
+        String hashTagName = "산문";
 
         // when
-        HashTagService hashTagService = new HashTagService();
         HashTag hashTag = hashTagService.find(hashTagName);
         HashTag hashTag2 = hashTagService.find(hashTagName);
 
