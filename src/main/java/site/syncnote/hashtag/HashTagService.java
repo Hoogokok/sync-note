@@ -1,7 +1,9 @@
 package site.syncnote.hashtag;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.syncnote.post.PostHashTagRepository;
 
 import java.util.Optional;
 
@@ -9,9 +11,11 @@ import java.util.Optional;
 @Service
 public class HashTagService {
     private HashTagRepository hashTagRepository;
+    private PostHashTagRepository postHashTagRepository;
 
-    public HashTagService(HashTagRepository hashTagRepository) {
+    public HashTagService(HashTagRepository hashTagRepository, PostHashTagRepository postHashTagRepository) {
         this.hashTagRepository = hashTagRepository;
+        this.postHashTagRepository = postHashTagRepository;
     }
 
     public HashTag find(String name) {
@@ -24,10 +28,8 @@ public class HashTagService {
         return newHashTag;
     }
 
-    public void delete(String name) {
-        Optional<HashTag> findByName = hashTagRepository.findByName(name);
-        if (findByName.isPresent()) {
-            HashTag hashTag = findByName.get();
+    public void delete(HashTag hashTag) {
+        if (!postHashTagRepository.existsByHashTagId(hashTag.getId())) {
             hashTag.delete();
             hashTagRepository.save(hashTag);
         }

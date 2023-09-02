@@ -39,4 +39,18 @@ class HashTagServiceTest {
         // then
         assertThat(hashTag).isEqualTo(hashTag2);
     }
+
+    @DisplayName("해시태그를 삭제한다.")
+    @Test
+    void delete() {
+        // given
+        String hashTagName = "에세이";
+        HashTag hashTag = hashTagService.find(hashTagName);
+
+        // when
+        hashTagService.delete(hashTag);
+
+        // then
+        assertThat(hashTag.isDeleted()).isTrue();
+    }
 }
