@@ -59,6 +59,7 @@ class PostServiceTest {
         assertThat(post.getTitle()).isEqualTo("title");
         assertThat(post.getContent()).isEqualTo("content");
         assertThat(post.getHashTags()).hasSize(3);
-        assertThat(post.getHashTags()).extracting("hashTag").contains(에세이, 산문, 시);
+        assertThat(post.getHashTags()).extracting("hashTag").extracting("name")
+            .containsExactlyInAnyOrder(에세이, 산문, 시);
     }
 }

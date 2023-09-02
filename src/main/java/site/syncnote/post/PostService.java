@@ -27,7 +27,7 @@ public class PostService {
             .build();
 
         if (hashTags != null && !hashTags.isEmpty()) {
-            List<HashTag> findHashTags = hashTags.stream().map(hashTagService::find).toList();
+            List<HashTag> findHashTags = hashTagService.find(hashTags);
             addHashTag(post, findHashTags);
             return postRepository.save(post);
         }
