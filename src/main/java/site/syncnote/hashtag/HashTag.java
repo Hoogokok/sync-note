@@ -34,11 +34,11 @@ public class HashTag {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof HashTag hashTag)) return false;
-        return deleted == hashTag.deleted && Objects.equals(name, hashTag.name);
+        return Objects.equals(id, hashTag.id) && Objects.equals(name, hashTag.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, deleted);
+        return Objects.hash(id, name);
     }
 }

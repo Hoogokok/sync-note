@@ -52,4 +52,8 @@ public class HashTagService {
             hashTagRepository.save(hashTag);
         }
     }
+
+    public void deleteAll() {
+        hashTagRepository.deleteAllInBatch();
+    }
 }

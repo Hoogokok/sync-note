@@ -15,6 +15,11 @@ class HashTagServiceTest {
     @Autowired
     HashTagService hashTagService;
 
+    @AfterEach
+    void tearDown() {
+        hashTagService.deleteAll();
+    }
+
     @DisplayName("해시태그 하나를 찾는다.")
     @Test
     void find() {
@@ -71,5 +76,22 @@ class HashTagServiceTest {
         // then
         assertThat(hashTags).extracting("name").containsExactlyInAnyOrder(에세이, 시, 산문);
         assertThat(hashTags).hasSize(3);
+    }
+
+    @DisplayName("기존에 생성한 해시태그는 재사용한다.")
+    @Test
+    void find_multi_hashTagNames_if_exisit_reuse() {
+        // given
+        String 에세이 = "에세이";
+        String 시 = "시";
+        String 산문 = "산문";
+        List<String> hashTagNames = List.of(에세이, 시, 산문);
+        List<HashTag> hashTags = hashTagService.find(hashTagNames);
+
+        // when
+        List<HashTag> hashTags2 = hashTagService.find(hashTagNames);
+
+        // then
+        assertThat(hashTags).isEqualTo(hashTags2);
     }
 }
