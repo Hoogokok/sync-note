@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -13,7 +15,7 @@ class HashTagServiceTest {
     @Autowired
     HashTagService hashTagService;
 
-    @DisplayName("해시태그를 찾는다.")
+    @DisplayName("해시태그 하나를 찾는다.")
     @Test
     void find() {
         // given
@@ -52,5 +54,22 @@ class HashTagServiceTest {
 
         // then
         assertThat(hashTag.isDeleted()).isTrue();
+    }
+
+    @DisplayName("해시태그를 여러개 찾는다.")
+    @Test
+    void find_multi_hashTagNames() {
+        // given
+        String 에세이 = "에세이";
+        String 시 = "시";
+        String 산문 = "산문";
+        List<String> hashTagNames = List.of(에세이, 시, 산문);
+
+        // when
+        List<HashTag> hashTags = hashTagService.find(hashTagNames);
+
+        // then
+        assertThat(hashTags).extracting("name").containsExactlyInAnyOrder(에세이, 시, 산문);
+        assertThat(hashTags).hasSize(3);
     }
 }
