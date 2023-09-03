@@ -26,13 +26,31 @@ public class PostService {
             .author(author)
             .build();
 
-        if (hashTags != null && !hashTags.isEmpty()) {
-            List<HashTag> findHashTags = hashTagService.find(hashTags);
-            addHashTag(post, findHashTags);
+        if (hashTags == null || hashTags.isEmpty()) {
             return postRepository.save(post);
         }
 
+        List<HashTag> findHashTags = hashTagService.save(hashTags);
+        addHashTag(post, findHashTags);
         return postRepository.save(post);
+    }
+
+    public void delete(Long id) {
+        Post post = findPost(id);
+        post.delete();
+        postRepository.save(post);
+    }
+
+    public void edit(Long id, String title, String content, List<String> hashTags) {
+        Post post = findPost(id);
+        List<HashTag> findHashTags = hashTagService.save(hashTags);
+        List<PostHashTag> postHashTags = findHashTags.stream().map(hashTag -> new PostHashTag(post, hashTag)).toList();
+        post.edit(title, content, postHashTags);
+        postRepository.save(post);
+    }
+
+    private Post findPost(Long id) {
+        return postRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 
     private void addHashTag(Post post, List<HashTag> hashTags) {

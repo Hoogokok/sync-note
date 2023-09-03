@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.syncnote.member.Member;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,7 +41,7 @@ public class Post {
         verifyHashTags(hashTags);
         this.title = title;
         this.content = content;
-        this.hashTags = hashTags;
+        this.hashTags = new ArrayList<>(hashTags);
     }
 
     public void addHashTag(List<PostHashTag> hashTags) {
@@ -52,7 +53,7 @@ public class Post {
     }
 
     private void verifyHashTags(List<PostHashTag> hashTags) {
-        if (hashTags == null || hashTags.isEmpty()) {
+        if (hashTags == null) {
             throw new IllegalArgumentException();
         }
 
