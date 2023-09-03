@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 public class PostService {
-    public PostRepository postRepository;
-    public HashTagService hashTagService;
+    private PostRepository postRepository;
+    private HashTagService hashTagService;
 
     public PostService(PostRepository postRepository, HashTagService hashTagService) {
         this.postRepository = postRepository;
@@ -78,5 +78,4 @@ public class PostService {
     private List<PostHashTag> convertPostHashTag(List<HashTag> findHashTags, Post post) {
         return findHashTags.stream().map(hashTag -> new PostHashTag(post, hashTag)).collect(Collectors.toList());
     }
-
 }
