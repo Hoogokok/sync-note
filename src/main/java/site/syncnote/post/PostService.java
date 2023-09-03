@@ -66,9 +66,10 @@ public class PostService {
         return postRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 
-    /** toList로 반환하면 immutable list가 반환되어 수정시 clear()가 불가능하다
-     *  만약에 toList를 쓰고 싶다면 post edit시 new ArrayList<>()안에 다시 넣어줘야한다.
-     *  그래서 stream().collect(Collectors.toList())를 쓴다.
+    /**
+     * toList로 반환하면 immutable list가 반환되어 수정시 clear()가 불가능하다
+     * 만약에 toList를 쓰고 싶다면 post edit시 new ArrayList<>()안에 다시 넣어줘야한다.
+     * 그래서 stream().collect(Collectors.toList())를 쓴다.
      */
     private void addHashTag(Post post, List<HashTag> hashTags) {
         List<PostHashTag> postHashTags = convertPostHashTag(hashTags, post);
