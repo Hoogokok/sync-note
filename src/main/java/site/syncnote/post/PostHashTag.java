@@ -16,9 +16,15 @@ public class PostHashTag {
     private Post post;
     @ManyToOne
     private HashTag hashTag;
+    private boolean deleted;
 
     public PostHashTag(Post post, HashTag hashTag) {
         this.post = post;
         this.hashTag = hashTag;
+        this.deleted = false;
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }

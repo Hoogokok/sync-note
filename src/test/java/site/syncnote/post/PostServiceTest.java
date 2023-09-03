@@ -68,13 +68,14 @@ class PostServiceTest {
         String title = "title";
         String content = "content";
         Member author = memberService.join("test", "test", "1234");
-        Post post = postService.write(title, content, List.of(), author);
+        Post post = postService.write(title, content, List.of("에세이"), author);
 
         //when
         postService.delete(post.getId());
 
         //then
         assertThat(post.isDeleted()).isTrue();
+        assertThat(post.getHashTags()).extracting("deleted").containsExactly(true);
     }
 
     @DisplayName("없는 글을 삭제하려고 하면 예외가 발생한다.")
@@ -108,5 +109,16 @@ class PostServiceTest {
         assertThat(post.getTitle()).isEqualTo("제목");
         assertThat(post.getContent()).isEqualTo("내용");
         assertThat(post.getHashTags()).isEmpty();
+    }
+
+    @DisplayName("없는 글을 수정하려고 하면 예외가 발생한다.")
+    @Test
+    void edit_fail_if_not_exist() {
+        //given
+        Long id = 1L;
+
+        //when & then
+        assertThatThrownBy(() -> postService.edit(id, "제목", "내용", List.of()))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }

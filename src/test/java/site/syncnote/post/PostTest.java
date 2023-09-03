@@ -140,4 +140,23 @@ class PostTest {
         // when & then
         assertThrows(IllegalArgumentException.class, () -> post.edit("너의 이야기", "본문", List.of()));
     }
+
+    @DisplayName("글을 삭제한다.")
+    @Test
+    void delete() {
+        // given
+        String name = "나숙희";
+        Member member = new Member("test@gmail.com", name, "1234");
+        Post post = Post.builder()
+            .title("나의 이야기")
+            .content("나의 이야기 본문")
+            .author(member)
+            .build();
+
+        // when
+        ReflectionTestUtils.setField(post, "deleted", true);
+
+        // then
+        assertThat(post.isDeleted()).isTrue();
+    }
 }

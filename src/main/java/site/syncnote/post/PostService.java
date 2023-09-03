@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import site.syncnote.hashtag.HashTag;
 import site.syncnote.hashtag.HashTagService;
 import site.syncnote.member.Member;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +38,10 @@ public class PostService {
     public void delete(Long id) {
         Post post = findPost(id);
         post.delete();
+        List<PostHashTag> postHashTags = post.getHashTags();
+        List<HashTag> hashTags = postHashTags.stream().map(PostHashTag::getHashTag).toList();
+        hashTagService.delete(hashTags, id);
+
         postRepository.save(post);
     }
 
