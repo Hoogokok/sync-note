@@ -41,7 +41,8 @@ public class Post {
         verifyHashTags(hashTags);
         this.title = title;
         this.content = content;
-        this.hashTags = new ArrayList<>(hashTags);
+        this.hashTags.clear();
+        this.hashTags.addAll(hashTags);
     }
 
     public void addHashTag(List<PostHashTag> hashTags) {

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.syncnote.post.PostHashTagRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -26,7 +27,7 @@ public class HashTagService {
         }
         List<String> existHashTagNames = existHashTags.stream().map(HashTag::getName).toList();
         hashTagNames.removeAll(existHashTagNames);
-        List<HashTag> newHashTags = hashTagNames.stream().map(HashTag::new).toList();
+        List<HashTag> newHashTags = hashTagNames.stream().map(HashTag::new).collect(Collectors.toList());
         hashTagRepository.saveAll(newHashTags);
         existHashTags.addAll(newHashTags);
 

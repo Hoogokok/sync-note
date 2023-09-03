@@ -7,6 +7,7 @@ import site.syncnote.hashtag.HashTagService;
 import site.syncnote.member.Member;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -54,8 +55,12 @@ public class PostService {
     }
 
     private void addHashTag(Post post, List<HashTag> hashTags) {
+        /**toList로 반환하면 immutable list가 반환되어 수정시 clear()가 불가능하다
+         *  만약에 toList를 쓰고 싶다면 post edit시 new ArrayList<>()안에 다시 넣어줘야한다.
+         *  그래서 stream().collect(Collectors.toList())를 쓴다.
+         */
         List<PostHashTag> postHashTags = hashTags.stream().map(hashTag -> new PostHashTag(post, hashTag))
-            .toList();
+            .collect(Collectors.toList());
         post.addHashTag(postHashTags);
     }
 }
