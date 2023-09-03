@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 public class HashTagService {
-    private HashTagRepository hashTagRepository;
-    private PostHashTagRepository postHashTagRepository;
+    private final HashTagRepository hashTagRepository;
+    private final PostHashTagRepository postHashTagRepository;
 
     public HashTagService(HashTagRepository hashTagRepository, PostHashTagRepository postHashTagRepository) {
         this.hashTagRepository = hashTagRepository;

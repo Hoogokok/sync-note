@@ -11,7 +11,7 @@ import java.util.List;
 @Transactional
 @Service
 public class BlogService {
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
     public BlogService(PostRepository postRepository) {
         this.postRepository = postRepository;

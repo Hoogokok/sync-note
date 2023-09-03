@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 public class PostService {
-    private PostRepository postRepository;
-    private HashTagService hashTagService;
+    private final PostRepository postRepository;
+    private final HashTagService hashTagService;
 
     public PostService(PostRepository postRepository, HashTagService hashTagService) {
         this.postRepository = postRepository;
