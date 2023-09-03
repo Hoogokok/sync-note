@@ -17,48 +17,7 @@ class HashTagServiceTest {
 
     @AfterEach
     void tearDown() {
-        hashTagService.deleteAll();
-    }
-
-    @DisplayName("해시태그 하나를 찾는다.")
-    @Test
-    void find() {
-        // given
-        String hashTagName = "에세이";
-
-        // when
-        HashTag hashTag = hashTagService.find(hashTagName);
-
-        // then
-        assertThat(hashTag.getName()).isEqualTo(hashTagName);
-    }
-
-    @DisplayName("기존에 생성한 해시태그는 재사용한다.")
-    @Test
-    void If_hashTag_already_exists_reuse() {
-        // given
-        String hashTagName = "산문";
-
-        // when
-        HashTag hashTag = hashTagService.find(hashTagName);
-        HashTag hashTag2 = hashTagService.find(hashTagName);
-
-        // then
-        assertThat(hashTag).isEqualTo(hashTag2);
-    }
-
-    @DisplayName("해시태그를 삭제한다.")
-    @Test
-    void delete() {
-        // given
-        String hashTagName = "에세이";
-        HashTag hashTag = hashTagService.find(hashTagName);
-
-        // when
-        hashTagService.delete(hashTag);
-
-        // then
-        assertThat(hashTag.isDeleted()).isTrue();
+        hashTagService.deleteAllInBatch();
     }
 
     @DisplayName("해시태그를 여러개 찾는다.")
@@ -93,5 +52,20 @@ class HashTagServiceTest {
 
         // then
         assertThat(hashTags).isEqualTo(hashTags2);
+    }
+
+    @DisplayName("해시태그를 삭제한다.")
+    @Test
+    void delete() {
+        // given
+        String hashTagName = "에세이";
+        String hashTagName2 = "시";
+        List<HashTag> hashTags = hashTagService.find(List.of(hashTagName, hashTagName2));
+
+        // when
+        hashTagService.delete(hashTags);
+
+        // then
+        assertThat(hashTags).extracting("deleted").containsExactly(true, true);
     }
 }
