@@ -28,6 +28,12 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    public void withdraw(String email) {
+        Member member = findMember(email);
+        member.withdraw();
+        memberRepository.save(member);
+    }
+
     private Member findMember(String email) {
         return memberRepository.findByEmail(email).orElseThrow(IllegalArgumentException::new);
     }

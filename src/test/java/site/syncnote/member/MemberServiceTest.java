@@ -65,7 +65,7 @@ class MemberServiceTest {
 
     @DisplayName("회원정보를 수정할 때 존재하지 않는 이메일이면 예외가 발생한다.")
     @Test
-    void testMethodNameHere() {
+    void update_fail_if_not_exist_email() {
         // given
         String email = "test@gmail.com";
         String newName = "새이름";
@@ -75,5 +75,21 @@ class MemberServiceTest {
         assertThatThrownBy(() -> {
             memberService.updateMemberInfo(email, newName, password);
         }).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("회원이 탈퇴한다.")
+    @Test
+    void withdraw() {
+        // given
+        String email = "test@gmail.com";
+        String newName = "새이름";
+        String password = "12345!";
+        Member member = memberService.join(email, newName, password);
+
+        // when
+        memberService.withdraw(email);
+
+        // then
+        assertThat(member.isDeleted()).isTrue();
     }
 }
