@@ -34,13 +34,12 @@ public class HashTagService {
         return existHashTags;
     }
 
-    public void delete(List<HashTag> hashTags) {
+    public void delete(List<HashTag> hashTags, Long postId) {
         hashTags.forEach(hashTag -> {
-            if (!postHashTagRepository.existsByHashTagId(hashTag.getId())) {
+            if (!postHashTagRepository.existsByHashTagIdAndPostIdNot(hashTag.getId(), postId)) {
                 hashTag.delete();
             }
         });
         hashTagRepository.saveAll(hashTags.stream().filter(HashTag::isDeleted).toList());
     }
-
 }

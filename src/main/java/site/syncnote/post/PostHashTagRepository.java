@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PostHashTagRepository extends JpaRepository<PostHashTag, Long> {
 
-     boolean existsByHashTagId(Long hashTagId);
+     boolean existsByHashTagIdAndPostIdNot(Long hashTagId, Long postId);
+
 }

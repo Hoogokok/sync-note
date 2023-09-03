@@ -62,7 +62,7 @@ class HashTagServiceTest {
         List<HashTag> hashTags = hashTagService.save(List.of(hashTagName, hashTagName2));
 
         // when
-        hashTagService.delete(hashTags);
+        hashTagService.delete(hashTags,1L);
 
         // then
         assertThat(hashTags).extracting("deleted").containsExactly(true, true);
