@@ -1,12 +1,10 @@
 package site.syncnote.post;
 
-import org.aspectj.weaver.ast.Literal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import site.syncnote.hashtag.HashTag;
 import site.syncnote.member.Member;
-
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -120,7 +118,7 @@ class PostTest {
             new PostHashTag(post, newHashTag5)
         );
 
-        // when
+        // when & then
         assertThrows(IllegalArgumentException.class, () -> post.edit("너의 이야기", "너의 이야기 본문", hashTags));
     }
 
@@ -138,7 +136,7 @@ class PostTest {
         ReflectionTestUtils.setField(post, "deleted", true);
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> post.edit("너의 이야기", "본문", List.of()));
+        assertThrows(IllegalArgumentException.class, () -> post.edit( "너의 이야기", "본문", List.of()));
     }
 
     @DisplayName("글을 삭제한다.")

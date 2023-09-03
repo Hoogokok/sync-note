@@ -37,7 +37,7 @@ class PostServiceTest {
         assertThat(post.getTitle()).isEqualTo(title);
         assertThat(post.getContent()).isEqualTo(content);
         assertThat(post.getAuthor()).isEqualTo(author);
-        assertThat(Objects.isNull(post.getHashTags())).isTrue();
+        assertThat(post.getHashTags()).isEmpty();
     }
 
     @DisplayName("글을 쓸 때 해시태그를 추가한다.")
@@ -71,7 +71,7 @@ class PostServiceTest {
         Post post = postService.write(title, content, List.of("에세이"), author);
 
         //when
-        postService.delete(post.getId());
+        postService.delete(post.getId(), author.getId());
 
         //then
         assertThat(post.isDeleted()).isTrue();
@@ -85,7 +85,7 @@ class PostServiceTest {
         Long id = 1L;
 
         //when & then
-        assertThatThrownBy(() -> postService.delete(id))
+        assertThatThrownBy(() -> postService.delete(id, 0L))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -103,7 +103,7 @@ class PostServiceTest {
         hashtagNames.clear();
 
         // when
-        postService.edit(post.getId(), "제목", "내용", hashtagNames);
+        postService.edit(author.getId(), post.getId(), "제목", "내용", hashtagNames);
 
         // then
         assertThat(post.getTitle()).isEqualTo("제목");
@@ -118,7 +118,25 @@ class PostServiceTest {
         Long id = 1L;
 
         //when & then
-        assertThatThrownBy(() -> postService.edit(id, "제목", "내용", List.of()))
+        assertThatThrownBy(() -> postService.edit(0L, id, "제목", "내용", List.of()))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("작성자가 아닌 사람이 글을 수정하려고 하면 예외가 발생한다.")
+    @Test
+    void edit_fail_if_not_author() {
+        //given
+        String title = "title";
+        String content = "content";
+        Member author = memberService.join("test", "test", "1234");
+        List<String> hashtagNames = new ArrayList<>();
+        hashtagNames.add("에세이");
+        hashtagNames.add("시");
+        Post post = postService.write(title, content, hashtagNames, author);
+        hashtagNames.clear();
+
+        //when & then
+        assertThatThrownBy(() -> postService.edit(0L, post.getId(), "제목", "내용", List.of()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

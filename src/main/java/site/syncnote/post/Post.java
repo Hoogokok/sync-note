@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.syncnote.member.Member;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -53,6 +52,17 @@ public class Post {
         this.hashTags = hashTags;
     }
 
+    public void delete() {
+        this.deleted = true;
+        if (Objects.nonNull(hashTags)) {
+            hashTags.forEach(PostHashTag::delete);
+        }
+    }
+
+    public boolean isAuthor(Long memberId) {
+        return author.haveYou(memberId);
+    }
+
     private void verifyHashTags(List<PostHashTag> hashTags) {
         if (hashTags == null) {
             throw new IllegalArgumentException();
@@ -62,13 +72,6 @@ public class Post {
         int newHashTagSize = hashTags.size();
         if (newHashTagSize > 5 || newHashTagSize + oldHashTagSize > 5) {
             throw new IllegalArgumentException();
-        }
-    }
-
-    public void delete() {
-        this.deleted = true;
-        if (Objects.nonNull(hashTags)) {
-            hashTags.forEach(PostHashTag::delete);
         }
     }
 }
