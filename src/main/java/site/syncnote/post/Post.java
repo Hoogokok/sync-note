@@ -20,7 +20,7 @@ public class Post {
     private String title;
     private String content;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostHashTag> hashTags;
+    private List<PostHashTag> hashTags = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member author;
@@ -67,5 +67,8 @@ public class Post {
 
     public void delete() {
         this.deleted = true;
+        if (Objects.nonNull(hashTags)) {
+            hashTags.forEach(PostHashTag::delete);
+        }
     }
 }
