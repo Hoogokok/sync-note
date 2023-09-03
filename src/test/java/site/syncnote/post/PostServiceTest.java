@@ -5,15 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import site.syncnote.hashtag.HashTag;
-import site.syncnote.hashtag.HashTagService;
 import site.syncnote.member.Member;
-import site.syncnote.member.MemberRepository;
+import site.syncnote.member.MemberService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -23,8 +20,7 @@ class PostServiceTest {
     @Autowired
     PostService postService;
     @Autowired
-    MemberRepository memberRepository;
-
+    MemberService memberService;
 
     @DisplayName("해시태그 없이 게시글을 작성한다.")
     @Test
@@ -32,8 +28,7 @@ class PostServiceTest {
         // given
         String title = "title";
         String content = "content";
-        Member author = new Member("test", "test", "test");
-        memberRepository.save(author);
+        Member author = memberService.join("test", "test", "1234");
 
         // when
         Post post = postService.write(title, content, List.of(), author);
@@ -49,8 +44,7 @@ class PostServiceTest {
     @Test
     void write_add_hashTag() {
         // given
-        Member author = new Member("test", "test", "test");
-        memberRepository.save(author);
+        Member author = memberService.join("test", "test", "1234");
         String 에세이 = "에세이";
         String 산문 = "산문";
         String 시 = "시";
@@ -73,8 +67,7 @@ class PostServiceTest {
         //given
         String title = "title";
         String content = "content";
-        Member author = new Member("test", "test", "test");
-        memberRepository.save(author);
+        Member author = memberService.join("test", "test", "1234");
         Post post = postService.write(title, content, List.of(), author);
 
         //when
@@ -101,8 +94,7 @@ class PostServiceTest {
         // given
         String title = "title";
         String content = "content";
-        Member author = new Member("test", "test", "test");
-        memberRepository.save(author);
+        Member author = memberService.join("test", "test", "1234");
         List<String> hashtagNames = new ArrayList<>();
         hashtagNames.add("에세이");
         hashtagNames.add("시");
