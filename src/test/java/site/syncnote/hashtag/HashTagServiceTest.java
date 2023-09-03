@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,11 +16,6 @@ class HashTagServiceTest {
     @Autowired
     HashTagService hashTagService;
 
-    @AfterEach
-    void tearDown() {
-        hashTagService.deleteAllInBatch();
-    }
-
     @DisplayName("해시태그를 여러개 저장한다.")
     @Test
     void save_multi_hashTagNames() {
@@ -27,7 +23,10 @@ class HashTagServiceTest {
         String 에세이 = "에세이";
         String 시 = "시";
         String 산문 = "산문";
-        List<String> hashTagNames = List.of(에세이, 시, 산문);
+        List<String> hashTagNames = new ArrayList<>();
+        hashTagNames.add(에세이);
+        hashTagNames.add(시);
+        hashTagNames.add(산문);
 
         // when
         List<HashTag> hashTags = hashTagService.save(hashTagNames);

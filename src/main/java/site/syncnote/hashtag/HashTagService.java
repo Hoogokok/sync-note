@@ -25,7 +25,7 @@ public class HashTagService {
         if (existHashTags.isEmpty()) {
             return hashTagRepository.saveAll(hashTagNames.stream().map(HashTag::new).toList());
         }
-        List<String> existHashTagNames = existHashTags.stream().map(HashTag::getName).toList();
+        List<String> existHashTagNames = existHashTags.stream().map(HashTag::getName).collect(Collectors.toList());
         hashTagNames.removeAll(existHashTagNames);
         List<HashTag> newHashTags = hashTagNames.stream().map(HashTag::new).collect(Collectors.toList());
         hashTagRepository.saveAll(newHashTags);
@@ -43,7 +43,4 @@ public class HashTagService {
         hashTagRepository.saveAll(hashTags.stream().filter(HashTag::isDeleted).toList());
     }
 
-    public void deleteAllInBatch() {
-        hashTagRepository.deleteAllInBatch();
-    }
 }
