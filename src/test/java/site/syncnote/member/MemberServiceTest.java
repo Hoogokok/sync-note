@@ -45,4 +45,35 @@ class MemberServiceTest {
             memberService.join(email, name, password);
         }).isInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("회원정보를 수정한다.")
+    @Test
+    void updateMemberInfo() {
+        // given
+        String email = "test@gmail.com";
+        String name = "test";
+        String password = "1234";
+        Member member = memberService.join(email, name, password);
+
+        // when
+        memberService.updateMemberInfo(member.getEmail(), "새이름", "12345!");
+
+        // then
+        assertThat(member.getName()).isEqualTo("새이름");
+        assertThat(member.getPassword()).isEqualTo("12345!");
+    }
+
+    @DisplayName("회원정보를 수정할 때 존재하지 않는 이메일이면 예외가 발생한다.")
+    @Test
+    void testMethodNameHere() {
+        // given
+        String email = "test@gmail.com";
+        String newName = "새이름";
+        String password = "12345!";
+
+        // when
+        assertThatThrownBy(() -> {
+            memberService.updateMemberInfo(email, newName, password);
+        }).isInstanceOf(IllegalArgumentException.class);
+    }
 }
