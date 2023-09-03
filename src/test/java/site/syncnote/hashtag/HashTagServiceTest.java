@@ -20,9 +20,9 @@ class HashTagServiceTest {
         hashTagService.deleteAllInBatch();
     }
 
-    @DisplayName("해시태그를 여러개 찾는다.")
+    @DisplayName("해시태그를 여러개 저장한다.")
     @Test
-    void find_multi_hashTagNames() {
+    void save_multi_hashTagNames() {
         // given
         String 에세이 = "에세이";
         String 시 = "시";
@@ -30,7 +30,7 @@ class HashTagServiceTest {
         List<String> hashTagNames = List.of(에세이, 시, 산문);
 
         // when
-        List<HashTag> hashTags = hashTagService.find(hashTagNames);
+        List<HashTag> hashTags = hashTagService.save(hashTagNames);
 
         // then
         assertThat(hashTags).extracting("name").containsExactlyInAnyOrder(에세이, 시, 산문);
@@ -39,16 +39,16 @@ class HashTagServiceTest {
 
     @DisplayName("기존에 생성한 해시태그는 재사용한다.")
     @Test
-    void find_multi_hashTagNames_if_exisit_reuse() {
+    void save_multi_hashTagNames_if_exisit_reuse() {
         // given
         String 에세이 = "에세이";
         String 시 = "시";
         String 산문 = "산문";
         List<String> hashTagNames = List.of(에세이, 시, 산문);
-        List<HashTag> hashTags = hashTagService.find(hashTagNames);
+        List<HashTag> hashTags = hashTagService.save(hashTagNames);
 
         // when
-        List<HashTag> hashTags2 = hashTagService.find(hashTagNames);
+        List<HashTag> hashTags2 = hashTagService.save(hashTagNames);
 
         // then
         assertThat(hashTags).isEqualTo(hashTags2);
@@ -60,7 +60,7 @@ class HashTagServiceTest {
         // given
         String hashTagName = "에세이";
         String hashTagName2 = "시";
-        List<HashTag> hashTags = hashTagService.find(List.of(hashTagName, hashTagName2));
+        List<HashTag> hashTags = hashTagService.save(List.of(hashTagName, hashTagName2));
 
         // when
         hashTagService.delete(hashTags);

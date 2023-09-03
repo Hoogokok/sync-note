@@ -16,7 +16,7 @@ public class HashTagService {
         this.postHashTagRepository = postHashTagRepository;
     }
 
-    public List<HashTag> find(List<String> hashTagNames) {
+    public List<HashTag> save(List<String> hashTagNames) {
         List<HashTag> existHashTags = hashTagRepository.findByNameIn(hashTagNames);
         if (existHashTags.size() == hashTagNames.size()) {
             return existHashTags;
