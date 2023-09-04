@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import site.syncnote.hashtag.HashTag;
 import site.syncnote.hashtag.HashTagService;
 import site.syncnote.member.Member;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +24,9 @@ public class PostService {
         this.hashTagService = hashTagService;
     }
 
-    public Post write(String title, String content, List<String> hashTags, Member author) {
+    // TODO: 2023/09/03 CQRS 적용하기
+    public Post write(String title, String content, List<String> hashTagNames, Member author) {
+        List<HashTag> hashTags = hashTagService.saveOrFind(hashTagNames);
         Post post = Post.builder()
             .title(title)
             .content(content)
@@ -35,13 +38,9 @@ public class PostService {
 
     public void delete(Long postId, Long memberId) {
         Post post = findPost(postId);
-        verifyAuthor(memberId, post);
-        post.delete();
-        List<PostHashTag> postHashTags = post.getHashTags();
-        List<HashTag> hashTags = postHashTags.stream().map(PostHashTag::getHashTag).toList();
-        hashTagService.delete(hashTags, postId);
-
-        postRepository.save(post);
+        post.delete(memberId);
+        List<HashTag> notUsedHashTags = findNotUsedHashTags(post);
+        hashTagService.delete(notUsedHashTags);
     }
 
     private List<HashTag> findNotUsedHashTags(Post post) {
@@ -58,18 +57,8 @@ public class PostService {
 
     public void edit(Long postId, Long memberId, String title, String content, List<String> hashTags) {
         Post post = findPost(postId);
-        verifyAuthor(memberId, post);
-        List<HashTag> findHashTags = hashTagService.save(hashTags);
-        List<PostHashTag> postHashTags = convertPostHashTag(findHashTags, post);
-        post.edit(title, content, postHashTags);
-
-        postRepository.save(post);
-    }
-
-    private void verifyAuthor(Long memberId, Post post) {
-        if (!post.isAuthor(memberId)) {
-            throw new IllegalArgumentException("작성자가 아닙니다.");
-        }
+        List<HashTag> findHashTags = hashTagService.saveOrFind(hashTags);
+        post.edit(title, content, findHashTags, memberId);
     }
 
     private Post findPost(Long id) {

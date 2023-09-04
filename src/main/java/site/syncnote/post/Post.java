@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.syncnote.hashtag.HashTag;
 import site.syncnote.member.Member;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,15 +36,29 @@ public class Post {
         this.deleted = false;
     }
 
-    public void edit(String title, String content, List<PostHashTag> hashTags) {
+    private List<PostHashTag> addHashTag(List<HashTag> hashTags) {
         if (deleted) {
             throw new IllegalArgumentException();
         }
         verifyHashTags(hashTags);
+        return convertPostHashTag(hashTags);
+    }
+
+    private List<PostHashTag> convertPostHashTag(List<HashTag> hashTags) {
+        return hashTags.stream()
+            .map(hashTag -> new PostHashTag(this, hashTag))
+            .toList();
+    }
+
+    public void edit(String title, String content, List<HashTag> hashTags, Long memberId) {
+        if (deleted) {
+            throw new IllegalArgumentException();
+        }
+        verifyAuthor(memberId, this);
+        verifyHashTags(hashTags);
         this.title = title;
         this.content = content;
-        this.hashTags.clear();
-        this.hashTags.addAll(hashTags);
+        this.hashTags = convertPostHashTag(hashTags);
     }
 
     public void delete(long memberId) {
@@ -54,17 +69,19 @@ public class Post {
         }
     }
 
-    public boolean isAuthor(Long memberId) {
+    private void verifyAuthor(Long memberId, Post post) {
+        if (!post.isAuthor(memberId)) {
+            throw new IllegalArgumentException("작성자가 아닙니다.");
+        }
+    }
+
+    private boolean isAuthor(Long memberId) {
         return author.haveYou(memberId);
     }
 
-    private void verifyHashTags(List<PostHashTag> hashTags) {
-        if (hashTags == null) {
-            throw new IllegalArgumentException();
-        }
-
-        int oldHashTagSize = Objects.isNull(this.hashTags) ? 0 : this.hashTags.size();
-        int newHashTagSize = hashTags.size();
+    private void verifyHashTags(List<HashTag> hashTags) {
+        int oldHashTagSize = this.hashTags.size();
+        int newHashTagSize = Objects.isNull(hashTags) ? 0 : hashTags.size();
         if (newHashTagSize > 5 || newHashTagSize + oldHashTagSize > 5) {
             throw new IllegalArgumentException();
         }

@@ -10,7 +10,7 @@ import site.syncnote.member.MemberService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -21,6 +21,7 @@ class PostServiceTest {
     PostService postService;
     @Autowired
     MemberService memberService;
+    // 독립적인 테스트를 위해 서비스가 아닌 레포지토리를 직접 호출하는 방식으로 바꾸어보자
 
     @DisplayName("해시태그 없이 게시글을 작성한다.")
     @Test
@@ -68,7 +69,9 @@ class PostServiceTest {
         String title = "title";
         String content = "content";
         Member author = memberService.join("test", "test", "1234");
-        Post post = postService.write(title, content, List.of("에세이"), author);
+        List<String> hashtagNames = new ArrayList<>();
+        hashtagNames.add("에세이");
+        Post post = postService.write(title, content, hashtagNames, author);
 
         //when
         postService.delete(post.getId(), author.getId());
