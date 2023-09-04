@@ -27,4 +27,8 @@ public class PostHashTag {
     public void delete() {
         this.deleted = true;
     }
+
+    public boolean isPost(Post post) {
+        return this.post.getId().equals(post.getId());
+    }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.syncnote.hashtag.HashTag;
 import site.syncnote.member.Member;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +27,11 @@ public class Post {
     private boolean deleted;
 
     @Builder
-    public Post(String title, String content, Member author) {
+    public Post(String title, String content, Member author, List<HashTag> hashTags) {
         this.title = title;
         this.content = content;
         this.author = author;
+        this.hashTags = Objects.isNull(hashTags) ? new ArrayList<>() : addHashTag(hashTags);
         this.deleted = false;
     }
 
@@ -44,15 +46,8 @@ public class Post {
         this.hashTags.addAll(hashTags);
     }
 
-    public void addHashTag(List<PostHashTag> hashTags) {
-        if (deleted) {
-            throw new IllegalArgumentException();
-        }
-        verifyHashTags(hashTags);
-        this.hashTags = hashTags;
-    }
-
-    public void delete() {
+    public void delete(long memberId) {
+        verifyAuthor(memberId, this);
         this.deleted = true;
         if (Objects.nonNull(hashTags)) {
             hashTags.forEach(PostHashTag::delete);

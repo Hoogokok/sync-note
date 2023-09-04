@@ -28,7 +28,7 @@ class HashTagServiceTest {
         hashTagNames.add(산문);
 
         // when
-        List<HashTag> hashTags = hashTagService.save(hashTagNames);
+        List<HashTag> hashTags = hashTagService.saveOrFind(hashTagNames);
 
         // then
         assertThat(hashTags).extracting("name").containsExactlyInAnyOrder(에세이, 시, 산문);
@@ -43,10 +43,10 @@ class HashTagServiceTest {
         String 시 = "시";
         String 산문 = "산문";
         List<String> hashTagNames = List.of(에세이, 시, 산문);
-        List<HashTag> hashTags = hashTagService.save(hashTagNames);
+        List<HashTag> hashTags = hashTagService.saveOrFind(hashTagNames);
 
         // when
-        List<HashTag> hashTags2 = hashTagService.save(hashTagNames);
+        List<HashTag> hashTags2 = hashTagService.saveOrFind(hashTagNames);
 
         // then
         assertThat(hashTags).isEqualTo(hashTags2);
@@ -58,7 +58,7 @@ class HashTagServiceTest {
         // given
         String hashTagName = "에세이";
         String hashTagName2 = "시";
-        List<HashTag> hashTags = hashTagService.save(List.of(hashTagName, hashTagName2));
+        List<HashTag> hashTags = hashTagService.saveOrFind(List.of(hashTagName, hashTagName2));
 
         // when
         hashTagService.delete(hashTags,1L);

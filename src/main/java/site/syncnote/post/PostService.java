@@ -12,10 +12,14 @@ import java.util.stream.Collectors;
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final PostHashTagRepository postHashTagRepository;
     private final HashTagService hashTagService;
 
-    public PostService(PostRepository postRepository, HashTagService hashTagService) {
+    public PostService(PostRepository postRepository,
+                       PostHashTagRepository postHashTagRepository,
+                       HashTagService hashTagService) {
         this.postRepository = postRepository;
+        this.postHashTagRepository = postHashTagRepository;
         this.hashTagService = hashTagService;
     }
 
@@ -24,14 +28,8 @@ public class PostService {
             .title(title)
             .content(content)
             .author(author)
+            .hashTags(hashTags)
             .build();
-
-        if (hashTags == null || hashTags.isEmpty()) {
-            return postRepository.save(post);
-        }
-        List<HashTag> findHashTags = hashTagService.save(hashTags);
-        addHashTag(post, findHashTags);
-
         return postRepository.save(post);
     }
 
@@ -44,6 +42,18 @@ public class PostService {
         hashTagService.delete(hashTags, postId);
 
         postRepository.save(post);
+    }
+
+    private List<HashTag> findNotUsedHashTags(Post post) {
+        List<HashTag> hashTags = post.getHashTags().stream()
+            .map(PostHashTag::getHashTag).toList();
+        List<HashTag> shouldNotDeletedHashTags = postHashTagRepository.findAllByHashTagIn(hashTags).stream()
+            .filter(postHashTag -> !postHashTag.isPost(post))
+            .map(PostHashTag::getHashTag)
+            .toList();
+        return hashTags.stream()
+            .filter(ht -> !shouldNotDeletedHashTags.contains(ht))
+            .toList();
     }
 
     public void edit(Long postId, Long memberId, String title, String content, List<String> hashTags) {
@@ -63,20 +73,7 @@ public class PostService {
     }
 
     private Post findPost(Long id) {
-        return postRepository.findById(id).orElseThrow(IllegalArgumentException::new);
-    }
-
-    /**
-     * toList로 반환하면 immutable list가 반환되어 수정시 clear()가 불가능하다
-     * 만약에 toList를 쓰고 싶다면 post edit시 new ArrayList<>()안에 다시 넣어줘야한다.
-     * 그래서 stream().collect(Collectors.toList())를 쓴다.
-     */
-    private void addHashTag(Post post, List<HashTag> hashTags) {
-        List<PostHashTag> postHashTags = convertPostHashTag(hashTags, post);
-        post.addHashTag(postHashTags);
-    }
-
-    private List<PostHashTag> convertPostHashTag(List<HashTag> findHashTags, Post post) {
-        return findHashTags.stream().map(hashTag -> new PostHashTag(post, hashTag)).collect(Collectors.toList());
+        return postRepository.findById(id)
+            .orElseThrow(IllegalArgumentException::new);
     }
 }

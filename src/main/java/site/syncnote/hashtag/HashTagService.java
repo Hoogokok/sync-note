@@ -17,7 +17,7 @@ public class HashTagService {
         this.postHashTagRepository = postHashTagRepository;
     }
 
-    public List<HashTag> save(List<String> hashTagNames) {
+    public List<HashTag> saveOrFind(List<String> hashTagNames) {
         List<HashTag> existHashTags = hashTagRepository.findByNameIn(hashTagNames);
         if (existHashTags.size() == hashTagNames.size()) {
             return existHashTags;
@@ -34,12 +34,8 @@ public class HashTagService {
         return existHashTags;
     }
 
-    public void delete(List<HashTag> hashTags, Long postId) {
-        hashTags.forEach(hashTag -> {
-            if (!postHashTagRepository.existsByHashTagIdAndPostIdNot(hashTag.getId(), postId)) {
-                hashTag.delete();
-            }
-        });
-        hashTagRepository.saveAll(hashTags.stream().filter(HashTag::isDeleted).toList());
+    public void delete(final List<HashTag> hashTags) {
+        hashTags.forEach(HashTag::delete);
+        hashTagRepository.saveAll(hashTags);
     }
 }
