@@ -76,7 +76,7 @@ public class Post {
     }
 
     private boolean isAuthor(Long memberId) {
-        return author.haveYou(memberId);
+        return author.has(memberId);
     }
 
     private void verifyHashTags(List<HashTag> hashTags) {

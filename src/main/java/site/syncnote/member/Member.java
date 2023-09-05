@@ -40,7 +40,7 @@ public class Member {
         this.deleted = true;
     }
 
-    public boolean haveYou(Long memberId) {
+    public boolean has(Long memberId) {
         return this.id.equals(memberId);
     }
 }

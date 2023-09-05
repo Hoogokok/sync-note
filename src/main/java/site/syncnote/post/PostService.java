@@ -2,36 +2,39 @@ package site.syncnote.post;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.syncnote.hashtag.HashTag;
-import site.syncnote.hashtag.HashTagService;
+import site.syncnote.hashtag.*;
 import site.syncnote.member.Member;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service
 public class PostService {
     private final PostRepository postRepository;
     private final PostHashTagRepository postHashTagRepository;
-    private final HashTagService hashTagService;
+    private final HashTagCommandService hashTagCommandService;
+    private final HashTagQueryService hashTagQueryService;
 
     public PostService(PostRepository postRepository,
                        PostHashTagRepository postHashTagRepository,
-                       HashTagService hashTagService) {
+                       HashTagCommandService hashTagCommandService,
+                       HashTagQueryService hashTagQueryService) {
         this.postRepository = postRepository;
         this.postHashTagRepository = postHashTagRepository;
-        this.hashTagService = hashTagService;
+        this.hashTagCommandService = hashTagCommandService;
+        this.hashTagQueryService = hashTagQueryService;
     }
 
     // TODO: 2023/09/03 CQRS 적용하기
     public Post write(String title, String content, List<String> hashTagNames, Member author) {
-        List<HashTag> hashTags = hashTagService.saveOrFind(hashTagNames);
+        HashTagNonExistQueryResults nonExist = hashTagQueryService.findNonExist(hashTagNames);
+        hashTagCommandService.save(nonExist);
+        List<HashTag> existHashTag = hashTagQueryService.findExistHashTag(hashTagNames);
         Post post = Post.builder()
             .title(title)
             .content(content)
             .author(author)
-            .hashTags(hashTags)
+            .hashTags(existHashTag)
             .build();
         return postRepository.save(post);
     }
@@ -40,7 +43,7 @@ public class PostService {
         Post post = findPost(postId);
         post.delete(memberId);
         List<HashTag> notUsedHashTags = findNotUsedHashTags(post);
-        hashTagService.delete(notUsedHashTags);
+        hashTagCommandService.delete(notUsedHashTags);
     }
 
     private List<HashTag> findNotUsedHashTags(Post post) {
@@ -55,10 +58,12 @@ public class PostService {
             .toList();
     }
 
-    public void edit(Long postId, Long memberId, String title, String content, List<String> hashTags) {
+    public void edit(Long postId, Long memberId, String title, String content, List<String> hashTagNames) {
+        HashTagNonExistQueryResults nonExist = hashTagQueryService.findNonExist(hashTagNames);
+        hashTagCommandService.save(nonExist);
+        List<HashTag> existHashTags = hashTagQueryService.findExistHashTag(hashTagNames);
         Post post = findPost(postId);
-        List<HashTag> findHashTags = hashTagService.saveOrFind(hashTags);
-        post.edit(title, content, findHashTags, memberId);
+        post.edit(title, content, existHashTags, memberId);
     }
 
     private Post findPost(Long id) {
