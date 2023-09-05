@@ -27,15 +27,4 @@ public class HashTag {
         this.deleted = true;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HashTag hashTag)) return false;
-        return Objects.equals(id, hashTag.id) && Objects.equals(name, hashTag.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
 }
