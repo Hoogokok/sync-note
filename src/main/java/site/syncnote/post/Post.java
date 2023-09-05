@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.syncnote.hashtag.HashTag;
 import site.syncnote.member.Member;
+import site.syncnote.post.posthashtag.PostHashTag;
 
 import java.util.ArrayList;
 import java.util.List;

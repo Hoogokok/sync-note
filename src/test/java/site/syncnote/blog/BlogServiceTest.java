@@ -9,7 +9,7 @@ import site.syncnote.member.Member;
 import site.syncnote.member.MemberService;
 import site.syncnote.member.blog.BlogService;
 import site.syncnote.post.Post;
-import site.syncnote.post.PostService;
+import site.syncnote.post.PostCommandService;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ class BlogServiceTest {
     @Autowired
     MemberService memberService;
     @Autowired
-    PostService postService;
+    PostCommandService postCommandService;
 
     @DisplayName("회원이 작성한 글을 모두 가져온다.")
     @Test
@@ -32,9 +32,9 @@ class BlogServiceTest {
         String title = "title";
         String content = "content";
         Member author = memberService.join("test", "test", "1234");
-        Post post = postService.write(title, content, List.of(), author);
-        Post post1 = postService.write(title, content, List.of(), author);
-        Post post2 = postService.write(title, content, List.of(), author);
+        Post post = postCommandService.write(title, content, List.of(), author);
+        Post post1 = postCommandService.write(title, content, List.of(), author);
+        Post post2 = postCommandService.write(title, content, List.of(), author);
 
         // when
         List<Post> posts = blogService.getPosts(author);
