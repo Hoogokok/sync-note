@@ -1,4 +1,4 @@
-package site.syncnote.post;
+package site.syncnote.post.posthashtag;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,8 +8,6 @@ import java.util.List;
 
 @Repository
 public interface PostHashTagRepository extends JpaRepository<PostHashTag, Long> {
-
-     boolean existsByHashTagIdAndPostIdNot(Long hashTagId, Long postId);
 
      List<PostHashTag> findAllByHashTagIn(List<HashTag> hashTags);
 }

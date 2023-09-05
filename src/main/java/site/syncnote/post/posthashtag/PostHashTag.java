@@ -1,9 +1,10 @@
-package site.syncnote.post;
+package site.syncnote.post.posthashtag;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.syncnote.hashtag.HashTag;
+import site.syncnote.post.Post;
 
 @NoArgsConstructor
 @Getter
