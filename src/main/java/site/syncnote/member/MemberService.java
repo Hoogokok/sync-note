@@ -40,7 +40,7 @@ public class MemberService {
 
     private void verifyEmail(String email) {
         if (memberRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
     }
 }
