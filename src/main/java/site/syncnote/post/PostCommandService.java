@@ -11,39 +11,32 @@ import java.util.List;
 @Service
 public class PostCommandService {
     private final PostRepository postRepository;
-    private final HashTagCommandService hashTagCommandService;
-    private final HashTagQueryService hashTagQueryService;
+    private final HashTagService hashTagService;
 
     public PostCommandService(PostRepository postRepository,
-                              HashTagCommandService hashTagCommandService,
-                              HashTagQueryService hashTagQueryService) {
+                              HashTagService hashTagService) {
         this.postRepository = postRepository;
-        this.hashTagCommandService = hashTagCommandService;
-        this.hashTagQueryService = hashTagQueryService;
+        this.hashTagService = hashTagService;
     }
 
     public Post write(String title, String content, List<String> hashTagNames, Member author) {
-        HashTagNonExistQueryResults nonExist = hashTagQueryService.findNonExist(hashTagNames);
-        hashTagCommandService.save(nonExist);
-        List<HashTag> existHashTag = hashTagQueryService.findExistHashTag(hashTagNames);
+        List<HashTag> hashTags = hashTagService.write(hashTagNames);
         Post post = Post.builder()
             .title(title)
             .content(content)
             .author(author)
-            .hashTags(existHashTag)
+            .hashTags(hashTags)
             .build();
         return postRepository.save(post);
     }
 
     public void delete(Post post, Member member, List<HashTag> notUsedHashTags) {
         post.delete(member.getId());
-        hashTagCommandService.delete(notUsedHashTags);
+        hashTagService.delete(notUsedHashTags);
     }
 
     public void edit(Post post, Member member, String title, String content, List<String> hashTagNames) {
-        HashTagNonExistQueryResults nonExist = hashTagQueryService.findNonExist(hashTagNames);
-        hashTagCommandService.save(nonExist);
-        List<HashTag> existHashTags = hashTagQueryService.findExistHashTag(hashTagNames);
-        post.edit(title, content, existHashTags, member.getId());
+        List<HashTag> hashTags = hashTagService.write(hashTagNames);
+        post.edit(title, content, hashTags, member.getId());
     }
 }
