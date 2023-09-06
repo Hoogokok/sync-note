@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import site.syncnote.hashtag.HashTag;
 import site.syncnote.member.Member;
+import site.syncnote.post.posthashtag.PostHashTag;
+
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -62,21 +65,27 @@ class PostTest {
         // given
         String name = "나숙희";
         Member member = new Member("test@gmail.com", name, "1234");
-        HashTag hashTag = new HashTag("에세이");
+        HashTag oldHashTag = new HashTag("에세이");
+        HashTag oldHashTag2 = new HashTag("구문");
         HashTag newHashTag = new HashTag("산문");
+        HashTag newHashTag2 = new HashTag("시");
         Post post = Post.builder()
             .title("나의 이야기")
             .content("나의 이야기 본문")
             .author(member)
+            .hashTags(List.of(oldHashTag, oldHashTag2))
             .build();
+        PostHashTag tag = post.getHashTags().stream().filter(postHashTag -> postHashTag.getHashTag().equals(oldHashTag)).findAny().get();
         ReflectionTestUtils.setField(member, "id", 1L);
 
         // when
-        post.edit("너의 이야기", "너의 이야기 본문", List.of(hashTag, newHashTag), member.getId());
+        post.edit("너의 이야기", "너의 이야기 본문", List.of(oldHashTag,newHashTag,newHashTag2), member.getId());
 
         // then
         assertThat(post.getTitle()).isEqualTo("너의 이야기");
         assertThat(post.getContent()).isEqualTo("너의 이야기 본문");
+        assertThat(post.getHashTags()).extracting("hashTag").containsExactly(oldHashTag, newHashTag,newHashTag2);
+        assertThat(post.getHashTags()).contains(tag);
     }
 
     @DisplayName("해시태그가 5개이상인 경우 글을 수정할 수 없다.")
@@ -160,6 +169,23 @@ class PostTest {
     @DisplayName("본인 글이 아닌 경우 삭제할 수 없다.")
     @Test
     void delete_fail_if_not_author() {
+        // given
+        String name = "나숙희";
+        Member member = new Member("test@gmail.com", name, "1234");
+        Post post = Post.builder()
+            .title("나의 이야기")
+            .content("나의 이야기 본문")
+            .author(member)
+            .build();
+        ReflectionTestUtils.setField(member, "id", 1L);
+
+        // when & then
+        assertThrows(IllegalArgumentException.class, () -> post.delete(  2L));
+    }
+
+    @DisplayName("본인 글이 아닌 경우 삭제할 수 없다.")
+    @Test
+    void delete_fail_if_() {
         // given
         String name = "나숙희";
         Member member = new Member("test@gmail.com", name, "1234");

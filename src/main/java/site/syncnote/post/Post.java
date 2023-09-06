@@ -11,6 +11,7 @@ import site.syncnote.post.posthashtag.PostHashTag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @NoArgsConstructor
 @Getter
@@ -59,13 +60,33 @@ public class Post {
         verifyHashTags(hashTags);
         this.title = title;
         this.content = content;
-        this.hashTags = convertPostHashTag(hashTags);
+        this.hashTags = mergeOldAndNewTags(hashTags);
+    }
+
+    private List<PostHashTag> mergeOldAndNewTags(List<HashTag> hashTags) {
+        Stream<PostHashTag> notDeletedTags = findNotDeletedTags(hashTags);
+        Stream<PostHashTag> newTags = convertNewTags(hashTags);
+        return Stream.of(notDeletedTags, newTags)
+            .flatMap(s -> s)
+            .toList();
+    }
+
+    private Stream<PostHashTag> convertNewTags(List<HashTag> hashTags) {
+        return hashTags.stream()
+            .filter(hashTag -> this.hashTags.stream().map(PostHashTag::getHashTag).noneMatch(ht -> ht.equals(hashTag)))
+            .map(hashTag -> new PostHashTag(this, hashTag));
+    }
+
+    private Stream<PostHashTag> findNotDeletedTags(List<HashTag> hashTags) {
+        Stream<PostHashTag> notDeltedTags = this.hashTags.stream()
+            .filter(postHashTag -> hashTags.contains(postHashTag.getHashTag()));
+        return notDeltedTags;
     }
 
     public void delete(long memberId) {
         verifyAuthor(memberId, this);
         this.deleted = true;
-        if (Objects.nonNull(hashTags)) {
+        if (!hashTags.isEmpty()) {
             hashTags.forEach(PostHashTag::delete);
         }
     }
