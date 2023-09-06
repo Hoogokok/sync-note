@@ -53,7 +53,7 @@ public class Post {
 
     public void edit(String title, String content, List<HashTag> hashTags, Long memberId) {
         if (deleted) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("삭제된 게시글입니다.");
         }
         verifyAuthor(memberId, this);
         verifyHashTags(hashTags);
@@ -84,7 +84,7 @@ public class Post {
         int oldHashTagSize = this.hashTags.size();
         int newHashTagSize = Objects.isNull(hashTags) ? 0 : hashTags.size();
         if (newHashTagSize > 5 || newHashTagSize + oldHashTagSize > 5) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("해시태그는 5개까지만 등록할 수 있습니다.");
         }
     }
 }
