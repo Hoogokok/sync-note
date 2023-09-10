@@ -22,6 +22,33 @@ class PostTest {
         String content = "나의 이야기 본문";
         String name = "나숙희";
         Member member = new Member("test@gmail.com", name, "1234");
+        HashTag 에세이 = new HashTag("에세이");
+        HashTag 산문 = new HashTag("산문");
+        HashTag 시 = new HashTag("시");
+
+        // when
+        Post post = Post.builder()
+            .title(title)
+            .content(content)
+            .author(member)
+            .postHashTags(List.of(에세이, 산문, 시))
+            .build();
+
+        // then
+        assertThat(post.getTitle()).isEqualTo(title);
+        assertThat(post.getAuthor()).isEqualTo(member);
+        assertThat(post.getContent()).isEqualTo(content);
+        assertThat(post.isDeleted()).isFalse();
+    }
+
+    @DisplayName("회원이 제목, 본문으로 글을 작성한다.")
+    @Test
+    void creat_post_not_hashTag() {
+        // given
+        String title = "나의 이야기";
+        String content = "나의 이야기 본문";
+        String name = "나숙희";
+        Member member = new Member("test@gmail.com", name, "1234");
 
         // when
         Post post = Post.builder()
@@ -76,7 +103,7 @@ class PostTest {
             .author(member)
             .postHashTags(oldHashTags)
             .build();
-        PostHashTag tag = post.getPostHashTags().stream().filter(postHashTag -> postHashTag.getHashTag().equals(oldHashTag)).findAny().get();
+        PostHashTag tag = post.findPostHashTags().stream().filter(postHashTag -> postHashTag.getHashTag().equals(oldHashTag)).findAny().get();
         ReflectionTestUtils.setField(member, "id", 1L);
         List<HashTag> newHashTags = new ArrayList<>();
         newHashTags.add(newHashTag);
@@ -89,8 +116,8 @@ class PostTest {
         // then
         assertThat(post.getTitle()).isEqualTo("너의 이야기");
         assertThat(post.getContent()).isEqualTo("너의 이야기 본문");
-        assertThat(post.getPostHashTags()).extracting("hashTag").contains(newHashTag, oldHashTag, newHashTag2);
-        assertThat(post.getPostHashTags()).contains(tag);
+        assertThat(post.findPostHashTags()).extracting("hashTag").contains(newHashTag, oldHashTag, newHashTag2);
+        assertThat(post.findPostHashTags()).contains(tag);
     }
 
     @DisplayName("해시태그가 5개이상인 경우 글을 수정할 수 없다.")
@@ -174,23 +201,6 @@ class PostTest {
     @DisplayName("본인 글이 아닌 경우 삭제할 수 없다.")
     @Test
     void delete_fail_if_not_author() {
-        // given
-        String name = "나숙희";
-        Member member = new Member("test@gmail.com", name, "1234");
-        Post post = Post.builder()
-            .title("나의 이야기")
-            .content("나의 이야기 본문")
-            .author(member)
-            .build();
-        ReflectionTestUtils.setField(member, "id", 1L);
-
-        // when & then
-        assertThrows(IllegalArgumentException.class, () -> post.delete(2L));
-    }
-
-    @DisplayName("본인 글이 아닌 경우 삭제할 수 없다.")
-    @Test
-    void delete_fail_if_() {
         // given
         String name = "나숙희";
         Member member = new Member("test@gmail.com", name, "1234");

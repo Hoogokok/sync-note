@@ -33,7 +33,9 @@ public class Post {
         this.title = title;
         this.content = content;
         this.author = author;
-        addHashTag(postHashTags);
+        if (Objects.nonNull(postHashTags)) {
+            addHashTag(postHashTags);
+        }
         this.deleted = false;
     }
 
@@ -62,7 +64,7 @@ public class Post {
         deleteAndAddHashTags(hashTags);
     }
 
-    public List<PostHashTag> getPostHashTags() {
+    public List<PostHashTag> findPostHashTags() {
         return postHashTags.stream()
             .filter(postHashTag -> !postHashTag.isDeleted())
             .collect(Collectors.toList());
