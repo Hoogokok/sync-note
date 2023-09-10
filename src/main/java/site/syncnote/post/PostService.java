@@ -46,7 +46,7 @@ public class PostService {
     }
 
     private List<HashTag> findNotUsedHashTags(final Post post) {
-        List<HashTag> hashTags = post.getPostHashTags().stream()
+        List<HashTag> hashTags = post.findPostHashTags().stream()
             .map(PostHashTag::getHashTag).toList();
         List<HashTag> shouldNotDeletedHashTags = postHashTagRepository.findAllByHashTagIn(hashTags).stream()
             .filter(postHashTag -> !postHashTag.isPost(post))

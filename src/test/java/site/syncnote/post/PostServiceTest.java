@@ -3,8 +3,8 @@ package site.syncnote.post;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import site.syncnote.SyncNoteIntegrationTest;
 import site.syncnote.member.Member;
 import site.syncnote.member.MemberRepository;
 
@@ -15,8 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @Transactional
-@SpringBootTest
-class PostServiceTest {
+class PostServiceTest extends SyncNoteIntegrationTest {
     @Autowired
     PostService postService;
     @Autowired
@@ -41,7 +40,7 @@ class PostServiceTest {
         assertThat(post.getTitle()).isEqualTo(title);
         assertThat(post.getContent()).isEqualTo(content);
         assertThat(post.getAuthor()).isEqualTo(author);
-        assertThat(post.getPostHashTags()).isEmpty();
+        assertThat(post.findPostHashTags()).isEmpty();
     }
 
     @DisplayName("글을 쓸 때 해시태그를 추가한다.")
@@ -65,8 +64,8 @@ class PostServiceTest {
         // then
         assertThat(post.getTitle()).isEqualTo("title");
         assertThat(post.getContent()).isEqualTo("content");
-        assertThat(post.getPostHashTags()).hasSize(3);
-        assertThat(post.getPostHashTags()).extracting("hashTag").extracting("name")
+        assertThat(post.findPostHashTags()).hasSize(3);
+        assertThat(post.findPostHashTags()).extracting("hashTag").extracting("name")
             .containsExactlyInAnyOrder(에세이, 산문, 시);
     }
 
@@ -118,7 +117,7 @@ class PostServiceTest {
         // then
         assertThat(post.getTitle()).isEqualTo("제목");
         assertThat(post.getContent()).isEqualTo("내용");
-        assertThat(post.getPostHashTags()).isEmpty();
+        assertThat(post.findPostHashTags()).isEmpty();
     }
 
     @DisplayName("작성자가 아닌 사람이 글을 수정하려고 하면 예외가 발생한다.")

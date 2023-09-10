@@ -3,17 +3,16 @@ package site.syncnote.hashtag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import site.syncnote.SyncNoteIntegrationTest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
-@SpringBootTest
-class HashTagServiceTest {
+class HashTagServiceTest extends SyncNoteIntegrationTest {
 
     @Autowired
     HashTagService hashTagService;
@@ -59,6 +58,7 @@ class HashTagServiceTest {
         List<HashTag> hashTags = new ArrayList<>();
         hashTags.add(에세이);
         hashTags.add(시);
+        
         // when
         hashTagService.delete(hashTags);
 
