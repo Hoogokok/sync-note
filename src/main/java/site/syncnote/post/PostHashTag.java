@@ -1,4 +1,4 @@
-package site.syncnote.post.posthashtag;
+package site.syncnote.post;
 
 import jakarta.persistence.*;
 import lombok.Getter;

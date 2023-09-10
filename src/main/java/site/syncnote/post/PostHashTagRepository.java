@@ -1,4 +1,4 @@
-package site.syncnote.post.posthashtag;
+package site.syncnote.post;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
