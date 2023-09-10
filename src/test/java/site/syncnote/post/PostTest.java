@@ -5,10 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import site.syncnote.hashtag.HashTag;
 import site.syncnote.member.Member;
-import site.syncnote.post.posthashtag.PostHashTag;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,9 +53,8 @@ class PostTest {
         HashTag hashTag6 = new HashTag("시");
 
 
-
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> Post.builder().title(title).content(content).author(member).hashTags(List.of(hashTag, hashTag2, hashTag3, hashTag4, hashTag5, hashTag6)).build());
+        assertThrows(IllegalArgumentException.class, () -> Post.builder().title(title).content(content).author(member).postHashTags(List.of(hashTag, hashTag2, hashTag3, hashTag4, hashTag5, hashTag6)).build());
     }
 
     @DisplayName("회원이 글을 수정한다.")
@@ -69,23 +67,30 @@ class PostTest {
         HashTag oldHashTag2 = new HashTag("구문");
         HashTag newHashTag = new HashTag("산문");
         HashTag newHashTag2 = new HashTag("시");
+        List<HashTag> oldHashTags = new ArrayList<>();
+        oldHashTags.add(oldHashTag);
+        oldHashTags.add(oldHashTag2);
         Post post = Post.builder()
             .title("나의 이야기")
             .content("나의 이야기 본문")
             .author(member)
-            .hashTags(List.of(oldHashTag, oldHashTag2))
+            .postHashTags(oldHashTags)
             .build();
-        PostHashTag tag = post.getHashTags().stream().filter(postHashTag -> postHashTag.getHashTag().equals(oldHashTag)).findAny().get();
+        PostHashTag tag = post.getPostHashTags().stream().filter(postHashTag -> postHashTag.getHashTag().equals(oldHashTag)).findAny().get();
         ReflectionTestUtils.setField(member, "id", 1L);
+        List<HashTag> newHashTags = new ArrayList<>();
+        newHashTags.add(newHashTag);
+        newHashTags.add(oldHashTag);
+        newHashTags.add(newHashTag2);
 
         // when
-        post.edit("너의 이야기", "너의 이야기 본문", List.of(oldHashTag,newHashTag,newHashTag2), member.getId());
+        post.edit("너의 이야기", "너의 이야기 본문", newHashTags, member.getId());
 
         // then
         assertThat(post.getTitle()).isEqualTo("너의 이야기");
         assertThat(post.getContent()).isEqualTo("너의 이야기 본문");
-        assertThat(post.getHashTags()).extracting("hashTag").containsExactly(oldHashTag, newHashTag,newHashTag2);
-        assertThat(post.getHashTags()).contains(tag);
+        assertThat(post.getPostHashTags()).extracting("hashTag").contains(newHashTag, oldHashTag, newHashTag2);
+        assertThat(post.getPostHashTags()).contains(tag);
     }
 
     @DisplayName("해시태그가 5개이상인 경우 글을 수정할 수 없다.")
@@ -127,7 +132,7 @@ class PostTest {
         ReflectionTestUtils.setField(post, "deleted", true);
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> post.edit( "너의 이야기", "본문", List.of(), member.getId()));
+        assertThrows(IllegalArgumentException.class, () -> post.edit("너의 이야기", "본문", List.of(), member.getId()));
     }
 
     @DisplayName("본인 글이 아닌 경우 수정할 수 없다.")
@@ -144,7 +149,7 @@ class PostTest {
         ReflectionTestUtils.setField(member, "id", 1L);
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> post.edit( "너의 이야기", "본문", List.of(), 2L));
+        assertThrows(IllegalArgumentException.class, () -> post.edit("너의 이야기", "본문", List.of(), 2L));
     }
 
     @DisplayName("글을 삭제한다.")
@@ -180,7 +185,7 @@ class PostTest {
         ReflectionTestUtils.setField(member, "id", 1L);
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> post.delete(  2L));
+        assertThrows(IllegalArgumentException.class, () -> post.delete(2L));
     }
 
     @DisplayName("본인 글이 아닌 경우 삭제할 수 없다.")
@@ -197,6 +202,6 @@ class PostTest {
         ReflectionTestUtils.setField(member, "id", 1L);
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> post.delete(  2L));
+        assertThrows(IllegalArgumentException.class, () -> post.delete(2L));
     }
 }
