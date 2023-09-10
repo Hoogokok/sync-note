@@ -27,4 +27,10 @@ public class HashTag {
         this.deleted = true;
     }
 
+    @Override
+    public String toString() {
+        return "HashTag{" +
+            "name='" + name + '\'' +
+            '}';
+    }
 }
