@@ -39,4 +39,8 @@ public class Member {
     public void withdraw() {
         this.deleted = true;
     }
+
+    public boolean has(Long memberId) {
+        return this.id.equals(memberId);
+    }
 }

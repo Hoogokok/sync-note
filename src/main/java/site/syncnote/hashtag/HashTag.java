@@ -4,10 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.util.Objects;
 
@@ -31,14 +28,9 @@ public class HashTag {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HashTag hashTag)) return false;
-        return deleted == hashTag.deleted && Objects.equals(name, hashTag.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, deleted);
+    public String toString() {
+        return "HashTag{" +
+            "name='" + name + '\'' +
+            '}';
     }
 }

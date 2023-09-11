@@ -2,36 +2,68 @@ package site.syncnote.hashtag;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import site.syncnote.SyncNoteIntegrationTest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class HashTagServiceTest {
+@Transactional
+class HashTagServiceTest extends SyncNoteIntegrationTest {
 
-    @DisplayName("해시태그를 찾는다.")
+    @Autowired
+    HashTagService hashTagService;
+    @Autowired
+    HashTagRepository hashTagRepository;
+
+    @DisplayName("있는 해시태그를 사용한다.")
     @Test
-    void find() {
+    void write() {
         // given
-        String hashTagName = "에세이";
-        // when
-        HashTagService hashTagService = new HashTagService();
-        HashTag hashTag = hashTagService.find(hashTagName);
-
-        // then
-        assertThat(hashTag.getName()).isEqualTo(hashTagName);
-    }
-
-    @DisplayName("기존에 생성한 해시태그는 재사용한다.")
-    @Test
-    void If_hashTag_already_exists_reuse() {
-        // given
-        String hashTagName = "에세이";
+        HashTag hashTag1 = hashTagRepository.save(new HashTag("test1"));
+        HashTag hashTag2 = hashTagRepository.save(new HashTag("test2"));
+        HashTag hashTag3 = hashTagRepository.save(new HashTag("test3"));
 
         // when
-        HashTagService hashTagService = new HashTagService();
-        HashTag hashTag = hashTagService.find(hashTagName);
-        HashTag hashTag2 = hashTagService.find(hashTagName);
+        List<HashTag> hashTags = hashTagService.write(List.of("test1", "test2", "test3"));
 
         // then
-        assertThat(hashTag).isEqualTo(hashTag2);
+        assertThat(hashTags).containsExactlyInAnyOrder(hashTag1, hashTag2, hashTag3);
     }
+
+    @DisplayName("없는 해시태그를 새로 쓴다.")
+    @Test
+    void write_if_not_exist() {
+        // given
+        List<String> hashTagNames = List.of("test1", "test2", "test3");
+
+        // when
+        List<HashTag> newHashTags = hashTagService.write(hashTagNames);
+
+        // then
+        assertThat(newHashTags).extracting("name").containsExactlyInAnyOrder("test1", "test2", "test3");
+    }
+
+    @DisplayName("해시태그를 삭제한다.")
+    @Test
+    void delete() {
+        // given
+        HashTag 에세이 = new HashTag("에세이");
+        HashTag 시 = new HashTag("시");
+        hashTagRepository.save(에세이);
+        hashTagRepository.save(시);
+        List<HashTag> hashTags = new ArrayList<>();
+        hashTags.add(에세이);
+        hashTags.add(시);
+        
+        // when
+        hashTagService.delete(hashTags);
+
+        // then
+        assertThat(hashTags).extracting("deleted").containsExactly(true, true);
+    }
+
 }

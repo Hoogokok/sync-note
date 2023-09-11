@@ -1,17 +1,44 @@
 package site.syncnote.hashtag;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+@Transactional
+@Service
 public class HashTagService {
-    private final Map<String, HashTag> map = new HashMap<>();
+    private final HashTagRepository hashTagRepository;
 
-    public HashTag find(String name) {
-        if (map.containsKey(name)) {
-            return map.get(name);
+    public HashTagService(HashTagRepository hashTagRepository) {
+        this.hashTagRepository = hashTagRepository;
+    }
+
+    public List<HashTag> write(List<String> hashTagNames) {
+        HashTagNonExistQueryResults nonExist = findNonExist(hashTagNames);
+        if (nonExist.isAnyNonExist()) {
+           hashTagRepository.saveAll(nonExist.getNonExistHashTags());
+           return findExistHashTag(hashTagNames);
         }
-        HashTag hashTag = new HashTag(name);
-        map.put(name, hashTag);
-        return hashTag;
+        return findExistHashTag(hashTagNames);
+    }
+
+    public void delete(List<HashTag> hashTags) {
+        hashTags.forEach(HashTag::delete);
+        hashTagRepository.saveAll(hashTags);
+    }
+
+    private HashTagNonExistQueryResults findNonExist(final List<String> hashTagNames) {
+        List<HashTag> existHashTag = findExistHashTag(hashTagNames);
+        List<HashTag> nonExistHashTags = hashTagNames.stream()
+            .filter(hashTagName -> existHashTag.stream().map(HashTag::getName).noneMatch(hashTagName::equals))
+            .map(HashTag::new)
+            .toList();
+
+        return new HashTagNonExistQueryResults(nonExistHashTags);
+    }
+
+    private List<HashTag> findExistHashTag(List<String> hashTagNames) {
+        return hashTagRepository.findByNameIn(hashTagNames);
     }
 }
